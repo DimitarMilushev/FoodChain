@@ -1,42 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:food_chain/main.dart';
 import 'package:food_chain/ui/product/product_item.dart';
 
-import '../../data/product.dart';
-
-class ProductList extends StatefulWidget {
+class ProductList extends ConsumerWidget {
   const ProductList({Key? key}) : super(key: key);
 
   @override
-  State<ProductList> createState() => _ProductListState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final products = ref.watch(productsProvider);
 
-class _ProductListState extends State<ProductList> {
-  List<Product> products = List.empty(growable: true);
-
-  @override
-  Widget build(BuildContext context) {
-    for (int i = 0; i < 10; i++) {
-      products.add(_getProduct());
-    }
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: products.length,
-        itemBuilder: ((context, index) => Column(children: [
-              ProductItem(data: products[index]),
-              const SizedBox(
-                height: 20,
-              )
-            ])));
-  }
-
-  Product _getProduct() {
-    const Product data = Product(
-        name: 'Pizza',
-        description: 'description',
-        thumbnail:
-            'https://images.pexels.com/photos/1260968/pexels-photo-1260968.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        rating: 7.6);
-
-    return data;
+    return products.when(
+        data: (data) => ListView.builder(
+            shrinkWrap: true,
+            itemCount: data.length,
+            itemBuilder: ((context, index) => Column(children: [
+                  ProductItem(data: data[index]),
+                  const SizedBox(
+                    height: 20,
+                  )
+                ]))),
+        error: (err, stack) => Text(err.toString()),
+        loading: () => const Center(child: CircularProgressIndicator()));
   }
 }
