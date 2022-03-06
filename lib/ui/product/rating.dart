@@ -6,11 +6,11 @@ class RatingElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        const Icon(Icons.star),
+        Text(rating.toString()),
         const SizedBox(width: 3),
-        Text(rating.toString())
+        const Icon(Icons.star),
       ],
     );
   }
